@@ -1,0 +1,5 @@
+*/bin/*
+*/obj/*
+*.suo
+*.user
+E1evens.Debug/Program.cs
