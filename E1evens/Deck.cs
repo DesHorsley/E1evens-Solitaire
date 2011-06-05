@@ -21,6 +21,14 @@ namespace E1evens
             }
         }
 
+        public int Count
+        {
+            get
+            {
+                return deckOfCards.Count;
+            }
+        }
+
         public IList<Card> Cards
         {
             get { return deckOfCards.AsReadOnly(); }
