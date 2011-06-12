@@ -5,25 +5,61 @@ using System.Text;
 
 namespace E1evens
 {
-    public class Table
+    public class Seat
     {
-        private Deck deck;
-        private List<Card>[] positions;
+        private CardList deck;
+        private CardList[] positions;
 
-        public Table()
+        public Seat()
         {
-            NewGame();
+            deck = CardList.CreateStandardDeck();
+            positions = new CardList[9];
+            for (int i = 0; i < 9; i++)
+            {
+                positions[i] = new CardList();
+            }
+        }
+
+        public Seat(CardList deck, CardList[] positions)
+        {
+            this.Deck = deck;
+            this.Positions = positions;
+        }
+
+        public CardList Deck
+        {
+            get { return deck; }
+            set
+            {
+                if (value == null)
+                {
+                    throw new ArgumentNullException();
+                }
+                deck = value;
+            }
+        }
+
+        public CardList[] Positions
+        {
+            get { return positions; }
+            set
+            {
+                if (value == null || value.Length != 9)
+                {
+                    throw new ArgumentException();
+                }
+                positions = value;
+            }
         }
 
         public void NewGame() 
         {
-            deck = new Deck();
+            deck = CardList.CreateStandardDeck();
             deck.Shuffle();
-            positions = new List<Card>[9];
 
             for (int i = 0; i < 9; i++)
             {
-                positions[i] = new List<Card>();
+                positions[i].Clear();
             }
         }
 
@@ -41,10 +77,10 @@ namespace E1evens
 
             if (positions[firstPos].Count != 0)
             {
-                throw new InvalidOperationException("Invalid Move");
+                throw new InvalidMoveException("Invalid Move");
             }
 
-            positions[firstPos].Add(deck.GetNextCard());
+            positions[firstPos].Add(deck.Pop());
 
         }
 
@@ -64,22 +100,22 @@ namespace E1evens
             // Can't place 2 cards if one or both is blank
             if (positions[firstPos].Count == 0 || positions[secondPos].Count == 0)
             {
-                throw new InvalidOperationException("Invalid Move");
+                throw new InvalidMoveException("Invalid Move");
             }
 
             if (positions[firstPos].Last().IsFaceCard || positions[secondPos].Last().IsFaceCard) 
             {
-                throw new InvalidOperationException("Invalid Move");
+                throw new InvalidMoveException("Invalid Move");
             }
 
             // Check the 2 card placement is a valid move
             if (positions[firstPos].Last().Value + positions[secondPos].Last().Value != 11)
             {
-                throw new InvalidOperationException("Invalid Move");
+                throw new InvalidMoveException("Invalid Move");
             }
 
-            positions[firstPos].Add(deck.GetNextCard());
-            positions[secondPos].Add(deck.GetNextCard());
+            positions[firstPos].Add(deck.Pop());
+            positions[secondPos].Add(deck.Pop());
         }
 
         public void PlaceCard(int firstPos, int secondPos, int thirdPos)
@@ -100,13 +136,13 @@ namespace E1evens
             if (positions[firstPos].Count == 0 || positions[secondPos].Count == 0 ||
                 positions[thirdPos].Count == 0)
             {
-                throw new InvalidOperationException("Invalid Move");
+                throw new InvalidMoveException("Invalid Move");
             }
 
             if (! (positions[firstPos].Last().IsFaceCard && positions[secondPos].Last().IsFaceCard &&
                 positions[thirdPos].Last().IsFaceCard) )
             {
-                throw new InvalidOperationException("Invalid Move");
+                throw new InvalidMoveException("Invalid Move");
             }
 
             bool isValidMove = false;
@@ -124,12 +160,12 @@ namespace E1evens
 
             if (!isValidMove)
             {
-                throw new InvalidOperationException("Invalid Move");
+                throw new InvalidMoveException("Invalid Move");
             }
 
-            positions[firstPos].Add(deck.GetNextCard());
-            positions[secondPos].Add(deck.GetNextCard());
-            positions[thirdPos].Add(deck.GetNextCard());
+            positions[firstPos].Add(deck.Pop());
+            positions[secondPos].Add(deck.Pop());
+            positions[thirdPos].Add(deck.Pop());
 
         }
 
@@ -145,15 +181,39 @@ namespace E1evens
         {
             get
             {
-                return false;
-            }
-        }
+                //Checks for an available card space.
+                foreach (CardList p in Positions)
+                {
+                    if (p.Count == 0)
+                    {
+                        return false;
+                    }
 
-        public int CardsRemaining
-        {
-            get
-            {
-                return deck.Count;
+                }
+             
+                Card[] cardsInSeat = new Card[9];
+                for (int i = 0; i < Positions.Length; i++)
+                {
+                    if (!positions[i].Top.IsFaceCard)
+                    {
+                        cardsInSeat[i] = positions[i].Top;
+                    }
+                }
+
+                for (int i = 0; i < cardsInSeat.Length - 1; i++)
+                {
+                    for (int j = i + 1; j < cardsInSeat.Length; j++)
+                    {
+                        if (cardsInSeat[i] != null && cardsInSeat[j] != null)
+                        {
+                            if (cardsInSeat[i].Value + cardsInSeat[j].Value == 11)
+                            {
+                                return false;
+                            }
+                        }
+                    }
+                }
+                return true;
             }
         }
 
@@ -175,7 +235,7 @@ namespace E1evens
                 s.Append(" ");
             }
 
-            s.Append("Cards remaining: " + CardsRemaining);
+            s.Append("Cards remaining: " + Deck.Count);
             return s.ToString();
         }
     }
