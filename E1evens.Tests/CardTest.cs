@@ -12,9 +12,9 @@ namespace E1evens.Tests
         [Test]
         public void IsFaceCard()
         {
-            Card notAFaceCard = new Card(Suit.Spades, 10);
-            Card faceCard2 = new Card(Suit.Spades, 11);
-            Card faceCard3 = new Card(Suit.Spades, 13);
+            Card notAFaceCard = new Card(10, Suit.Spades);
+            Card faceCard2 = new Card(11, Suit.Spades);
+            Card faceCard3 = new Card(13, Suit.Spades);
 
             Assert.IsFalse(notAFaceCard.IsFaceCard);
             Assert.IsTrue(faceCard2.IsFaceCard);
@@ -25,7 +25,7 @@ namespace E1evens.Tests
         [ExpectedException]
         public void Constructor_InvalidValue_ExceptionThrown()
         {
-            Card outOfBoundsCard = new Card(Suit.Spades, 14);
+            Card outOfBoundsCard = new Card(14, Suit.Spades);
         }
     }
 }

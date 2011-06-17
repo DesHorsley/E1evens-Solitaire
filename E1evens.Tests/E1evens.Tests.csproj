@@ -45,9 +45,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CardTest.cs" />
-    <Compile Include="DeckTest.cs" />
+    <Compile Include="CardListTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TableTest.cs" />
+    <Compile Include="SeatTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\E1evens\E1evens.csproj">
